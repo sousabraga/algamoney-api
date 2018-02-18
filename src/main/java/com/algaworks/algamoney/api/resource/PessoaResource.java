@@ -43,8 +43,8 @@ public class PessoaResource {
 	}
 	
 	@GetMapping("/{id}")
-	public Pessoa buscarPorId(@PathVariable Long id) {
-		return pessoaRepository.findOne(id);
+	public Pessoa buscarPorId(@PathVariable("id") Pessoa pessoa) {
+		return pessoa;
 	}
 	
 	@PostMapping

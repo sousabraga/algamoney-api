@@ -36,8 +36,8 @@ public class LancamentoResource {
 	}
 	
 	@GetMapping("/{id}")
-	public Lancamento buscarPorId(@PathVariable Long id) {
-		return lancamentoRepository.findOne(id);
+	public Lancamento buscarPorId(@PathVariable("id") Lancamento lancamento) {
+		return lancamento;
 	}
 	
 	@PostMapping

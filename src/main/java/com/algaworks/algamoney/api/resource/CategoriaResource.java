@@ -38,8 +38,8 @@ public class CategoriaResource {
 	}
 	
 	@GetMapping("/{id}")
-	public Categoria buscarPorID(@PathVariable Long id) {
-		return categoriaRepository.findOne(id);
+	public Categoria buscarPorID(@PathVariable("id") Categoria categoria) {
+		return categoria;
 	}
 	
 	@PostMapping
