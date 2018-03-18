@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 
 import com.algaworks.algamoney.api.model.Lancamento;
 import com.algaworks.algamoney.api.repository.filter.LancamentoFilter;
+import com.algaworks.algamoney.api.repository.projection.ResumoLancamento;
 
 public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 
@@ -36,6 +37,33 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 		
 		TypedQuery<Lancamento> query = entityManager.createQuery(criteria);
 
+		setarPaginacao(query, pageable);
+		
+		return new PageImpl<>(query.getResultList(), pageable, getTotal(lancamentoFilter));
+	}
+	
+	@Override
+	public Page<ResumoLancamento> resumir(LancamentoFilter lancamentoFilter, Pageable pageable) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ResumoLancamento> criteria = builder.createQuery(ResumoLancamento.class);
+		Root<Lancamento> root = criteria.from(Lancamento.class);
+		
+		criteria.select(builder.construct(ResumoLancamento.class, 
+				root.get("id"), 
+				root.get("descricao"), 
+				root.get("dataVencimento"), 
+				root.get("dataPagamento"), 
+				root.get("valor"), 
+				root.get("tipo"), 
+				root.get("categoria").get("nome"), 
+				root.get("pessoa").get("nome")));
+		
+		Predicate[] predicates = setarFiltros(lancamentoFilter, builder, root);
+		
+		criteria.where(predicates);
+		
+		TypedQuery<ResumoLancamento> query = entityManager.createQuery(criteria);
+		
 		setarPaginacao(query, pageable);
 		
 		return new PageImpl<>(query.getResultList(), pageable, getTotal(lancamentoFilter));
@@ -66,7 +94,7 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 		return predicates.toArray(new Predicate[predicates.size()]);
 	}
 
-	private void setarPaginacao(TypedQuery<Lancamento> query, Pageable pageable) {
+	private void setarPaginacao(TypedQuery<?> query, Pageable pageable) {
 		int paginaAtual = pageable.getPageNumber();
 		int limiteDeRegistrosPorPagina = pageable.getPageSize();
 		int primeiroRegistro = paginaAtual * limiteDeRegistrosPorPagina;
