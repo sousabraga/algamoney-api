@@ -1,6 +1,8 @@
 package com.algaworks.algamoney.api.service;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.algaworks.algamoney.api.model.Lancamento;
@@ -25,6 +27,23 @@ public class LancamentoService {
 			throw new PessoaInexistenteOuInativaException();
 		
 		return lancamentoRepository.save(lancamento);
+	}
+	
+	public Lancamento atualizar(Long id, Lancamento lancamento) {
+		Lancamento lancamentoSalvo = buscarLancamentoPorId(id);
+		
+		BeanUtils.copyProperties(lancamento, lancamentoSalvo, "id");
+		
+		return lancamentoRepository.save(lancamentoSalvo);
+	}
+	
+	private Lancamento buscarLancamentoPorId(Long id) {
+		Lancamento lancamentoSalvo = lancamentoRepository.findOne(id);
+		
+		if (lancamentoSalvo == null)
+			throw new EmptyResultDataAccessException(1);
+		
+		return lancamentoSalvo;
 	}
 	
 }
