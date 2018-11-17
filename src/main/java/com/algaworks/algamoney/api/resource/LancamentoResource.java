@@ -85,7 +85,6 @@ public class LancamentoResource {
 		return ResponseEntity.ok(lancamentoService.atualizar(id, lancamento));
 	}
 	
-	
 	@ExceptionHandler({ PessoaInexistenteOuInativaException.class })
 	public ResponseEntity<Object> handlePessoaInexistenteOuInativaException(PessoaInexistenteOuInativaException ex) {
 		String mensagemUsuario = messageSource.getMessage("pessoa.inativa-ou-inexistente", null, LocaleContextHolder.getLocale());
